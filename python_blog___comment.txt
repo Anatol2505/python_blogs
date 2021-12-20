@@ -18,7 +18,7 @@
 
 *******************************************
 Работа выполнена на Python + requests + lxml
-Выбраны все блоги/релизы/таблицы Python за 2011-2021 гг и сохранены в БД SQLITE python_blogs.db
+Выбраны все посты/релизы/таблицы Python за 2011-2021 гг и сохранены в БД SQLITE python_blogs.db
 
 Модули Python:
 - python_blogs.py          --- основной
@@ -27,21 +27,21 @@
 Результат работы программы сохранен в SQLITE --- python_blogs.db
 Таблицы:
 
-    CREATE TABLE blog (     - таблица блогов
-    b_id TEXT PRIMARY KEY,  - уникальный номер блога в БД сайта (https://blog.python.org/)
-    b_url TEXT,             - урл блога
+    CREATE TABLE blog (     - таблица постов
+    b_id TEXT PRIMARY KEY,  - уникальный номер поста в БД сайта (https://blog.python.org/)
+    b_url TEXT,             - урл поста
     b_date TEXT,            - дата
     b_title TEXT,           - title
     b_author TEXT,          - автор
-    b_content TEXT);        - текст страницы (очищеный и отформатированый {/n)
+    b_content TEXT);        - текст поста (очищеный и отформатированый (/n)
 
     CREATE TABLE release (  - таблица релизов
     r_url TEXT PRIMARY KEY, - уникальный урл релиза
-    r_id_blog TEXT,         - уникальный номер блога (из таблицы blog)
+    r_id_blog TEXT,         - уникальный номер поста (из таблицы blog)
     r_date TEXT,            - дата
     r_title TEXT,           - title     
     r_h1 TEXT,              - h1
-    r_content TEXT,         - текст страницы (очищеный и отформатированый {/n)
+    r_content TEXT,         - текст страницы релиза (очищеный и отформатированый {/n)
     r_peps_list TEXT,       - список урл PEPS релиза
     FOREIGN KEY (r_id_blog) REFERENCES blog(b_id));
 
@@ -55,7 +55,7 @@
     f_GPG TEXT);            - ! список из 2 полей (название + урл)
 
     CREATE TABLE log_err (  - таблица - лог ошибочных блог/релиз
-    e_id_blog TEXT ,        - блог
+    e_id_blog TEXT ,        - пост
     e_url_release TEXT,     - релиз
     e_status_code TEXT,     - код ответа сервера (например - 404)
     e_comment TEXT);        - комментарий
