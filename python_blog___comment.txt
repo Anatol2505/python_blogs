@@ -1,0 +1,70 @@
+Описание тестового задания:
+
+создать скрипт, который из архива https://blog.python.org/ - BLOG ARCHIVE (eng) достает информацию по каждому посту за все время:
+    - дата публикации
+    - заголовок
+    - текст
+    - автор 
+в каждом посте найти все ссылки, которые имеют отношение к релизу (например https://www.python.org/downloads/release/python-3100a7/)
+и на этой странице получить:
+    - title
+    - h1
+    - дата релиза
+    - текст
+    - все ссылки на PEP (например, https://www.python.org/dev/peps/pep-0623/)
+    - все ссылки и остальную информацию из таблицы Files
+создать нужные таблицы и связи и сохранять результаты в базу данных (sqlite3)
+код разместить на github
+
+*******************************************
+Рбота выполнена на Python + requests + lxml
+Выбраны все блоги/релизы/таблицы Python за 2011-2021 гг и сохранены в БД SQLITE python_blogs.db
+
+Модули Python:
+- python_blogs.py          --- основной
+- python_blog_modules.py   --- дополнительные модули
+
+Результат работы программы сохранен в SQLITE --- python_blogs.db
+Таблицы:
+
+    CREATE TABLE blog (     - таблица блогов
+    b_id TEXT PRIMARY KEY,  - уникальный номер блога в БД сайта (https://blog.python.org/)
+    b_url TEXT,             - урл блога
+    b_date TEXT,            - дата
+    b_title TEXT,           - title
+    b_author TEXT,          - автор
+    b_content TEXT);        - текст страницы (очищеный и отформатированый {/n)
+
+    CREATE TABLE release (  - таблица релизов
+    r_url TEXT PRIMARY KEY, - уникальный урл релиза
+    r_id_blog TEXT,         - уникальный номер блога (из таблицы blog)
+    r_date TEXT,            - дата
+    r_title TEXT,           - title     
+    r_h1 TEXT,              - h1
+    r_content TEXT,         - текст страницы (очищеный и отформатированый {/n)
+    r_peps_list TEXT,       - список урл PEPS релиза
+    FOREIGN KEY (r_id_blog) REFERENCES blog(b_id));
+
+    CREATE TABLE files (    - таблица с информацией из таблицы Files) релиза
+    f_url_release TEXT,     - уникальный урл релиза
+    f_Version TEXT,         - ! список из 2 полей (название + урл)
+    f_Operating_System TEXT,
+    f_Description TEXT,
+    f_MD5_Sum TEXT,
+    f_File_Size TEXT,
+    f_GPG TEXT);            - ! список из 2 полей (название + урл)
+
+    CREATE TABLE log_err (  - таблица - лог ошибочных блог/релиз
+    e_id_blog TEXT ,        - блог
+    e_url_release TEXT,     - релиз
+    e_status_code TEXT,     - код ответа сервера (например - 404)
+    e_comment TEXT);        - комментарий
+
+    CREATE TABLE log (      - таблица - лог процесса выполнения программы
+    log_line TEXT); 
+    """
+Программа в ходе выполения выводит на екран строки лога процесса и сохраняет их в БД (таблица log).
+
+В процессе написания возникли некоторые вопросы к постановке задания:
+1. урл релизов можно выбирать только из "href" или искать по всему тексту блога ? 
+
