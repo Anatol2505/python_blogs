@@ -54,7 +54,7 @@
     f_File_Size TEXT,
     f_GPG TEXT);            - ! список из 2 полей (название + урл)
 
-    CREATE TABLE log_err (  - таблица - лог ошибочных блог/релиз
+    CREATE TABLE log_err (  - таблица - лог ошибочных пост/релиз
     e_id_blog TEXT ,        - пост
     e_url_release TEXT,     - релиз
     e_status_code TEXT,     - код ответа сервера (например - 404)
