@@ -14,7 +14,7 @@ url_next = "https://blog.python.org/"
 # *****************************************************************
 
 
-# ***************************************************************** сторінка з списком блогів
+# ***************************************************************** сторінка з списком постів
 while url_next:
     nom_page += 1
 
@@ -29,7 +29,7 @@ while url_next:
     url_next = tree.xpath('//*[@class="blog-pager-older-link"]/@href')       # наступна сторінка
     url_next = url_next[0] if url_next else ""                               # "" - завершення - остання сторінка !!!
 
-    # -------------------------------------------------- сторінка - список блогів
+    # -------------------------------------------------- сторінка - список постів
     for blog in tree.xpath('//div[@class="blog-posts hfeed"]/div'):
         nom_blog += 1
         MM.db_log(f"{'-' * 50} Blog - {nom_blog}", MM.color_blue)
@@ -48,11 +48,11 @@ while url_next:
         #  'Pablo Galindo'
         item['b_content'] = MM.xpath_find(blog, 'blog- content',
         ['.//*[@class="post-body entry-content"]//text()', './/*[@class="gmail_default"]//text()'])
-        # -------------------------------------------------- перевіряємо чи існує блог в таблиці blog БД
+        # -------------------------------------------------- перевіряємо чи існує пост в таблиці blog БД
 
         if MM.db_select(table_name="blog", table_fields="*", table_where=f"b_id='{item['b_id']}'"):
             MM.db_log(f"---> Blog found. {item['b_id']} {item['b_url']}", MM.color_cyan)
-            continue                                       # блог вже є в БД  ---> читаємо наступний
+            continue                                       # пост вже є в БД  ---> читаємо наступний
 
         if not MM.db_insert(table_name="blog", table_values="?, ?, ?, ?, ?, ?", table_fields=list(item.values())[:6]):
             continue                                       # збій запису в БД ---> читаємо наступний
@@ -87,7 +87,7 @@ while url_next:
 
             if MM.db_select(table_name="release", table_fields="*", table_where=f"r_url='{item['r_url']}'"):
                 MM.db_log(f"---> Release found. Blog- {item['b_id']} Release- {item['r_url']}", MM.color_cyan)
-                continue                                   # блог вже є в БД  ---> читаємо наступний
+                continue                                   # пост вже є в БД  ---> читаємо наступний
 
             r_res = MM.get_requests(url=item["r_url"], log_comment="   - Release")
             if res.status_code > 399:
@@ -112,7 +112,7 @@ while url_next:
             item['r_content'] = MM.xpath_find(r_tree, 'content', ['//article[@class="text"]//text()'])
             pos = item['r_content'].find('\nFiles\n')
             if pos != -1:
-                item['r_content'] = item['r_content'][:pos]    # видаляємо таблицю
+                item['r_content'] = item['r_content'][:pos]    # видаляємо текст таблиці
             # -------------------------------------------------- список peps
             item['r_peps'] = str([x for x in r_tree.xpath('//article[@class="text"]//@href') if 'peps/pep' in x])
             # ['https://www.python.org/dev/peps/pep-0657/', ...]
